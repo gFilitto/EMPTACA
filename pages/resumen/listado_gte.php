@@ -1,5 +1,5 @@
 <?php
-include('../../log/conex.php');
+//include('../../log/conex.php');
 include('../../log/money_format.php');
 include('../../log/conex_mysql.php');
 

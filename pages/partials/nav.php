@@ -22,6 +22,7 @@
             <li><a href="#" class="detallado">Detallado</a></li>            
           </ul>
         </li>
+        <li class="Export"><a href="log/logout.php">Cerrar Sesión</a></li>
       </ul>
        </div>
      </div>

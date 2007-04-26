@@ -27,3 +27,13 @@ body.loading .modal {
 @-moz-document url-prefix() {
         fieldset { display: table-cell; }
     }
+
+#login{
+    background:white;
+    width: 80%;
+    margin-top:10%;
+    margin-left: 10%;
+    border:1px solid #999;
+
+
+}
