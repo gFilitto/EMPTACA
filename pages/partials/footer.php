@@ -73,24 +73,15 @@
 
 	 
 
-	 $('#export').click(function(){
-		$('#myModal').modal('show');
-		$.ajax({
-			type:'GET', 
-                url: 'pages/detallado/export.php',
-                async:false,
-                success: function(data) {                   
-                 	$('#myModal').modal('hide');
-                 	$('#inicio').addClass('active');
-                 	$(".container").html(data);
-                 
-                  
-                },error: function() {
-					$("body").removeClass("loading");
-					alert('Se ha producido un error');
-				}
-		});
-	});
+	
+
+	 function confirmar()
+	{
+		if(confirm('¿Estas seguro de visitar esta url?'))
+			return true;
+		else
+			return false;
+	}
 
 	$('.exportDB').click(function(){
 		$('li').removeClass('active');
@@ -99,21 +90,28 @@
 			var id_medi = $('.id_medi').val();
 			//var id_admin = $('.id_admin').val();
 			var id_trata = $('.id_trata').val();
-			$.ajax(
-            {                   
-                type:'GET', 
-                url: 'log/exportdb.php',
-                async:false,
-                success: function(data) {                   
-                 	$('#myModal').modal('hide');
-                 	$('.exportDB').addClass('active');
-                 	$(".container").html(data);                 
-                  
-                },error: function() {
-					$("body").removeClass("loading");
-					alert('Se ha producido un error');
-				}
-            });
+			var confi = confirmar();
+			
+			if(confi == true){
+				$.ajax(
+	            {                   
+	                type:'GET', 
+	                url: 'log/exportdb.php',
+	                async:false,
+	                success: function(data) {                   
+	                 	$('#myModal').modal('hide');
+	                 	$('.exportDB').addClass('active');
+	                 	$(".container").html(data);                 
+	                  
+	                },error: function() {
+						$("body").removeClass("loading");
+						alert('Se ha producido un error');
+					}
+	            });
+			}else{
+				$('#myModal').modal('hide');
+			}
+			
          });
 </script>
 

@@ -13,7 +13,8 @@
 	$cargo= $_REQUEST['cargo'];
 	$vendedor = $_REQUEST['vendedores'];
 	//CONSULTA QUE TRAE LAS COMISIONES 
-	$consulta = mysqli_query($conexion,"SELECT *,com.ActualApplyToAmount/1.12*ven.porcentaje as calc_result FROM historial_comisiones as com, vendedores as ven
+	$consulta = mysqli_query($conexion,"SELECT *,com.ActualApplyToAmount/1.12*ven.porcentaje as calc_result, com.id
+											FROM historial_comisiones as com, vendedores as ven
 	   										WHERE com.ApplyToGLPostDate BETWEEN '$fecha' AND '$fecha1'
 	   										AND com.SLPRSNID = '$vendedor'
 	            							AND com.SPRSNSMN LIKE '$cargo%'
@@ -26,8 +27,9 @@
 											 AND sup.id_supervisor = ven.SLPRSNID"); 
     $nf = mysqli_num_rows($consulta);
     $nf2 = mysqli_num_rows($consulta1);
-		echo '<a  href="pages/resumen/export.php" id="export">Exportar a Excel</a>';
+		echo '<a href="#" id="Export">Exportar a Excel</a>';
 	
+	 $i = 0;
 	 $Calc = 0; 
 	 $montoT = 0;
 	 $sinIvaTotal = 0;
@@ -71,23 +73,30 @@
 	     //$date_post = $row1['ApplyToGLPostDate']->format('Y-m-d');
 	     
 	     $nom = utf8_encode($row1['FULLNAME_SLSPRSN']);
-	     
-		 $porcen = $row1['porcentaje'];
+	     $porcen = $row1['porcentaje'];
 		 $Porce = $porcen * 100;
+		 ?><script type="text/javascript">
+		 	console.log(<?php echo $row1['id']; ?>);
+		 </script>
+		 <?php
+		 ?>
+		
+		<?php	
 
-		 $html.= '<tr><td>'.$id."</td>
-	    			   <td>".$nom."</td>
-	    			   <td>".$row1['CUSTNAME']." </td>
-	    			   <td>".$row1['APTODCNM']."</td>
-	                   <td>".$date."</td>
-	                   <td>".$row1['APFRDCNM']."</td>
-	                   <td>".$date1."</td>
-	                   <td>".number_format($monto,2)."</td>
-	                   <td>".number_format($sinIva,2)."</td>
-	                   <td>".number_format($calc,2)."</td>
-	                   <td>".$Porce."</td>
+		 $id =  array($row1['id']);
+		 $html.= '<tr><td><input name="id" type="text" disabled value="'.$row1['id'].'"></td>
+	    			   <td>'.$nom.'</td>
+	    			   <td>'.$row1['CUSTNAME'].' </td>
+	    			   <td>'.$row1['APTODCNM'].'</td>
+	                   <td>'.$date.'</td>
+	                   <td>'.$row1['APFRDCNM'].'</td>
+	                   <td>'.$date1.'</td>
+	                   <td>'.number_format($monto,2).'</td>
+	                   <td>'.number_format($sinIva,2).'</td>
+	                   <td>'.number_format($calc,2).'</td>
+	                   <td>'.$Porce.'</td>
 	                   <td></td>
-	               </tr>";  
+	               </tr>';  
 
 	     $montoT += $monto;
 	     $sinIvaTotal += $row1['MontoSinIva'];  
@@ -95,65 +104,11 @@
 	}
 
 	if($cargo == 'SUPERVISOR'){
-		
-		while($ven = mysqli_fetch_array($consulta1)){
-			//CONSULTA PARA TRAER LAS FACTURAS DE LOS VENDEDORES DE CADA SUPERVISOR
-			$consulta2 = mysqli_query($conexion,"SELECT *
-											 FROM supervisores as sup, vendedores as ven, historial_comisiones as hist
-											 WHERE sup.id_vendedor= '$ven[id_vendedor]'
-											 AND ven.SLPRSNID = sup.id_vendedor
-											 AND hist.SLPRSNID = sup.id_vendedor
-											 AND hist.ApplyToGLPostDate BETWEEN '$fecha' AND '$fecha1'");
-			//SETIANDO VARIABLES
-			$montoTven = 0;
-			$sinIvaTotalVen = 0;
-			//$MontoComisionCal = 0;
-			
-			$nom = "";
+		include('listado_supervisor.php');
 
-			//DATOS DEL SUPERVISOR
-			$por = $ven['porcentaje'];
-			$nom_sup = $ven['FULLNAME_SLSPRSN'];
-			$id = $ven['SLPRSNID'];
-			
-			
-			$MontoComisionCal =0;	
+	}else if($cargo == 'GTE VENTAS'){
 
-			while($row2 = mysqli_fetch_array($consulta2)){
-				$por = $ven['porcentaje_sup'];
-				$montoven = $row2['ActualApplyToAmount'];
-				$montoTven += $montoven;
-			    $sinIvaTotalVen += $row2['MontoSinIva'];  
-			   //$comisionCal += $calc;
-			   $calcven = $row2['ActualApplyToAmount']/1.12*$por;
-			   $Porce_sup = $por * 100;
-			  	$nom = utf8_encode($row2['FULLNAME_SLSPRSN']);	
-			  	$CalcVen += $calcven;
-				//$id = $row2['SLPRSNID'];
-				$MontoCobroVendedor += $montoTven;
-				$MontoSinIvaSupervisor += $sinIvaTotalVen;
-				$MontoComisionCal += $CalcVen;		
-
-			$date = $row2['ApplyToGLPostDate'];
-	    	$date1= $row2['APFRDCDT'];
-
-			$html.= '<tr><td>'.$id."</td>
-	    			   <td>".$nom."</td>
-	    			   <td>".$row2['CUSTNAME']." </td>
-	    			   <td>".$row2['APTODCNM']."</td>
-	                   <td>".$date."</td>
-	                   <td>".$row2['APFRDCNM']."</td>
-	                   <td>".$date1."</td>
-	                   <td>".number_format($montoven,2)."</td>
-	                   <td>".number_format($sinIvaTotalVen,2)."</td>
-	                   <td>".number_format($calcven,2)."</td>
-	                   <td>".$Porce_sup."</td>
-	                   <td></td>
-	               </tr>";  
-
-			}
-			
-		}
+		include('listado_gte.php');
 
 	}
 	 	 
@@ -171,9 +126,29 @@
 		              </tr>'; 
 	$html .= '</table></div>';
 	echo $html;
+		
 }else{
 	echo '<div class="row">
 			<div class="alert alert-warning">No hay comisiones registradas para ese mes</div>
 		  </div>';
 }
 ?>
+<script type="text/javascript">
+	 $('#Export').click(function(){
+		$('#myModal').modal('show');
+		var id = $('#Id').val();
+		$.ajax({
+			type:'GET', 
+            url: 'pages/detallado/prueba_export.php?id='+id,
+            async:false,
+            success: function(data){                   
+              	$('#myModal').modal('hide');
+               	$('#inicio').addClass('active');
+              	$(".container").html(data);
+            },error: function() {
+					$("body").removeClass("loading");
+					alert('Se ha producido un error');
+			}
+		});
+	});
+</script>

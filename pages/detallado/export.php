@@ -2,9 +2,10 @@
  
 include('../../log/conex_mysql.php');
 
-$consulta = mysqli_query($conexion,"SELECT * FROM totales");
-
-
+$ids = $_REQUEST['id'];
+foreach ($ids as $id) {
+    $consulta = mysqli_query($conexion,"SELECT * FROM historial_comisiones WHERE id = '$id'");
+}
 
      require_once('../../lib/Classes/PHPExcel.php');
      $objPHPExcel = new PHPExcel();
@@ -23,30 +24,26 @@ $consulta = mysqli_query($conexion,"SELECT * FROM totales");
         
 
         $objPHPExcel->setActiveSheetIndex(0)
-        ->setCellValue('A1','Rif Cliente')
-        ->setCellValue('B1','Razon Social')
-        ->setCellValue('C1','N° Fact/Cheq. Dev')
-        ->setCellValue('D1','Fecha Emisión Fact.')
-        ->setCellValue('E1','N° Cobro/Rent')
-        ->setCellValue('F1','Fecha cobro Fact')
-        ->setCellValue('G1','Monto/Cobro')
-        ->setCellValue('H1','Monto sin Iva')
-        ->setCellValue('I1','Días de Cobranza')
-        ->setCellValue('J1','Monto sin Iva')
-        ->setCellValue('K1','Calculo');
-
-
+        ->setCellValue('A1','Id')
+        ->setCellValue('B1','Vendedor')
+        ->setCellValue('C1','Cliente')
+        ->setCellValue('D1','N° Fact/Cheq. Dev')
+        ->setCellValue('E1','Fecha Emisión Fact.')
+        ->setCellValue('F1','N° Cobro/Rent')
+        ->setCellValue('G1','Fecha cobro Fact')
+        ->setCellValue('H1','Monto/Cobro')
+        ->setCellValue('I1','Monto sin Iva')
+        ->setCellValue('J1','Comisiones')
+        ->setCellValue('K1','%');
 
         //ESTILO DE LA HOJA DE CALCULO
         $objPHPExcel->getActiveSheet()->getDefaultColumnDimension()->setWidth(25);
-       
-        $objPHPExcel->getActiveSheet()->getStyle('G2:G200')->getNumberFormat()->setFormatCode("#,##0.00");
-        $objPHPExcel->getActiveSheet()->getStyle('J2:J200')->getNumberFormat()->setFormatCode("#,##0.00");
-        $objPHPExcel->getActiveSheet()->getStyle('D2:D200')->getNumberFormat()->setFormatCode("#,##0.00");
-        $objPHPExcel->getActiveSheet()->getStyle('F2:F200')->getNumberFormat()->setFormatCode("#,##0.00");
+        $objPHPExcel->getActiveSheet()->getStyle('H2:G200')->getNumberFormat()->setFormatCode("#,##0.00");
+        $objPHPExcel->getActiveSheet()->getStyle('I2:J200')->getNumberFormat()->setFormatCode("#,##0.00");
+        $objPHPExcel->getActiveSheet()->getStyle('J2:D200')->getNumberFormat()->setFormatCode("#,##0.00");
+        //$objPHPExcel->getActiveSheet()->getStyle('F2:F200')->getNumberFormat()->setFormatCode("#,##0.00");
 
     $i = 2;  
-    
     while($row = mysqli_fetch_array($consulta)){
 
       $sql = mysqli_query($conexion,"SELECT * FROM hist_commissions_sale 

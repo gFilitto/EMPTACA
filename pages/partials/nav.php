@@ -14,7 +14,7 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li class="active" ><a href="index.php">Inicio <span class="sr-only">(current)</span></a></li>
-        <li class="Export"><a href="#" class="exportDB" onclick="return confirmar()">Exportar DB</a></li>
+        <li class="Export"><a href="#" class="exportDB">Exportar DB</a></li>
         <li class="dropdown" id="comision">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">  Comisiones <span class="caret"></span></a>
           <ul class="dropdown-menu">
