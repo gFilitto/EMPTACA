@@ -9,7 +9,8 @@ $sql = "SELECT cli.CUSTNMBR,cli.CUSTNAME,
        		   ven.SLPRSNFN,ven.SPRSNSLN,ven.SPRSNSMN,ven.SLPRSNID,
 	   	       fac.APTODCNM,fac.ActualApplyToAmount,fac.APFRDCNM,fac.ApplyToGLPostDate,fac.APFRDCDT,	
 	   	       fac.ActualApplyToAmount/1.12*0.02 as Comision,
-	   	       fac.ActualApplyToAmount/1.12 as MontoSinIva	     
+	   	       fac.ActualApplyToAmount/1.12 as MontoSinIva,
+	   	       fac.ApplyFromGLPostDate	     
 		FROM RM00101 AS cli, RM20201 AS fac, RM00301 AS ven
 	    WHERE cli.CUSTNMBR = fac.CUSTNMBR
 		AND cli.SLPRSNID = ven.SLPRSNID
@@ -41,13 +42,14 @@ while( $row1 = sqlsrv_fetch_array($consulta, SQLSRV_FETCH_ASSOC)){
 
 	$date = $row1['ApplyToGLPostDate']->format('Y-m-d');
 	$date1= $row1['APFRDCDT']->format('Y-m-d');
+	$dateGL= $row1['ApplyFromGLPostDate']->format('Y-m-d');
 	$full_name = mysqli_escape_string($conexion,$row1['SLPRSNFN']." ".$row1['SPRSNSLN']);
 	$custname = mysqli_escape_string($conexion,$row1['CUSTNAME']);
 
 
 
 	
-	$insert = mysqli_query($conexion,"INSERT INTO historial_comisiones (CUSTNMBR,CUSTNAME,APTODCNM,ApplyToGLPostDate,APFRDCNM,APFRDCDT,ActualApplyToAmount,MontoSinIva,Comisiones,SLPRSNID,FULLNAME_SLSPRSN,SPRSNSMN) VALUES ('$row1[CUSTNMBR]','$custname','$row1[APTODCNM]','$date','$row1[APFRDCNM]','$date1','$row1[ActualApplyToAmount]','$row1[MontoSinIva]','$row1[Comision]','$row1[SLPRSNID]','$full_name','$row1[SPRSNSMN]')")or die("Error".mysqli_error($conexion));
+	$insert = mysqli_query($conexion,"INSERT INTO historial_comisiones (CUSTNMBR,CUSTNAME,APTODCNM,ApplyToGLPostDate,ApplyFromGLPostDate,APFRDCNM,APFRDCDT,ActualApplyToAmount,MontoSinIva,Comisiones,SLPRSNID,FULLNAME_SLSPRSN,SPRSNSMN) VALUES ('$row1[CUSTNMBR]','$custname','$row1[APTODCNM]','$date','$dateGL','$row1[APFRDCNM]','$date1','$row1[ActualApplyToAmount]','$row1[MontoSinIva]','$row1[Comision]','$row1[SLPRSNID]','$full_name','$row1[SPRSNSMN]')")or die("Error".mysqli_error($conexion));
 
 
 

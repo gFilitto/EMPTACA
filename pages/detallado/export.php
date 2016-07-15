@@ -2,7 +2,8 @@
  
 include('../../log/conex_mysql.php');
 
-    $consulta = mysqli_query($conexion,"SELECT * FROM exportador_excel");
+    $key = $_REQUEST['key'];
+    $consulta = mysqli_query($conexion,"SELECT * FROM exportador_excel WHERE llave = '$key'");
 
      require_once('../../lib/Classes/PHPExcel.php');
      $objPHPExcel = new PHPExcel();

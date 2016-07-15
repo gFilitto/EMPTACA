@@ -13,7 +13,7 @@
 	$cargo= $_REQUEST['cargo'];
 	//CONSULTA QUE TRAE LAS COMISIONES 
 	$consulta = mysqli_query($conexion,"SELECT DISTINCT FULLNAME_SLSPRSN,SLPRSNID FROM historial_comisiones 
-    									WHERE ApplyToGLPostDate BETWEEN '$fecha' AND '$fecha1'
+    									WHERE ApplyFromGLPostDate BETWEEN '$fecha' AND '$fecha1'
     									AND ActualApplyToAmount > 0
     									");
     $nf = mysqli_num_rows($consulta);
@@ -49,7 +49,7 @@
 	   
 	  
 			$consulta1= mysqli_query($conexion,"SELECT *,com.ActualApplyToAmount/1.12*ven.porcentaje as calc_result FROM historial_comisiones as com, vendedores as ven
-	   										WHERE com.ApplyToGLPostDate BETWEEN '$fecha' AND '$fecha1'
+	   										WHERE com.ApplyFromGLPostDate BETWEEN '$fecha' AND '$fecha1'
 	   										AND com.FULLNAME_SLSPRSN = '$row[FULLNAME_SLSPRSN]'
 	   										AND com.SLPRSNID = ven.SLPRSNID 
 	            							AND com.ActualApplyToAmount 
@@ -81,7 +81,7 @@
 											 WHERE sup.id_vendedor= '$datos_ven[id_vendedor]'
 											 AND ven.SLPRSNID = sup.id_vendedor
 											 AND hist.SLPRSNID = sup.id_vendedor
-											 AND hist.ApplyToGLPostDate BETWEEN '$fecha' AND '$fecha1'");
+											 AND hist.ApplyFromGLPostDate BETWEEN '$fecha' AND '$fecha1'");
 
 		         //SETIANDO VARIABLES 
 				$zonaMonto = 0;
@@ -163,15 +163,7 @@
 	    	 $comisionCal = toMoney($Calc);
 	    	 $CalcZonaComision = toMoney($CalcZona);
 
-	    	 switch ($porcen) {
-	    	 	case '0.018':
-	    	 		 $porcen = 1.8;
-	    	 		break;
-	    	 	
-	    	 	default:
-	    	 		# code...
-	    	 		break;
-	    	 }
+	    	 $porcen = $porcen * 100;
 
 	         $html .= '<tr>
 	         			<td>'.$id.'</td>

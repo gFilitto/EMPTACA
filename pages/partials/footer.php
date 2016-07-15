@@ -85,7 +85,7 @@
 
 	$('.exportDB').click(function(){
 		$('li').removeClass('active');
-		$('#myModal').modal('show');
+		
 			var tomo = jQuery(this).attr("rel"); 
 			var id_medi = $('.id_medi').val();
 			//var id_admin = $('.id_admin').val();
@@ -93,6 +93,7 @@
 			var confi = confirmar();
 			
 			if(confi == true){
+				$('#myModal').modal('show');
 				$.ajax(
 	            {                   
 	                type:'GET', 

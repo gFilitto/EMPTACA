@@ -1,3 +1,8 @@
+<style type="text/css">
+	.luz tr:hover{
+		background: #efefef;
+	}
+</style>
 <?php
 	include('../../log/conex.php');
 	include('../../log/money_format.php');
@@ -12,14 +17,17 @@
 	//echo $fecha.' '. $fecha1;
 	$cargo= $_REQUEST['cargo'];
 	$vendedor = $_REQUEST['vendedores'];
+	$key = uniqid();
 	//CONSULTA QUE TRAE LAS COMISIONES 
 	$consulta = mysqli_query($conexion,"SELECT *,com.ActualApplyToAmount/1.12*ven.porcentaje as calc_result, com.id
 											FROM historial_comisiones as com, vendedores as ven
-	   										WHERE com.ApplyToGLPostDate BETWEEN '$fecha' AND '$fecha1'
+	   										WHERE com.ApplyFromGLPostDate BETWEEN '$fecha' AND '$fecha1'
 	   										AND com.SLPRSNID = '$vendedor'
-	            							AND com.SPRSNSMN LIKE '$cargo%'
+	            							AND com.SPRSNSMN LIKE '%$cargo%'
 	            							AND com.SLPRSNID = ven.SLPRSNID 
-	            							ORDER BY CUSTNMBR ASC");
+	            							ORDER BY com.APTODCNM ASC")or die("error");
+
+
 	//CONSULTA PARA TRAER LOS VENDEDORES DE CADA SUPERVISOR
 	$consulta1 = mysqli_query($conexion,"SELECT sup.id_vendedor,ven.porcentaje,ven.FULLNAME_SLSPRSN,ven.SLPRSNID,ven.porcentaje_sup
 											 FROM supervisores as sup, vendedores as ven
@@ -27,7 +35,7 @@
 											 AND sup.id_supervisor = ven.SLPRSNID"); 
     $nf = mysqli_num_rows($consulta);
     $nf2 = mysqli_num_rows($consulta1);
-		echo '<a href="pages/detallado/export.php" id="#">Exportar a Excel</a>';
+		echo '<a href="pages/detallado/export.php?key='.$key.'" id="#">Exportar a Excel</a>';
 	
 	 $i = 0;
 	 $Calc = 0; 
@@ -43,7 +51,7 @@
 			$CalcVen = 0;
 	if( $nf > 0 || $nf2 > 0)
 	{
-		$html = '<div class="table-responsive"><table class="table table-bordered" style="font-size:11px;">
+		$html = '<div class="table-responsive"><table class="table table-bordered luz" style="font-size:11px;">
 	        <tr>
 	            <th>Id</th>
 	            <th>Vendedor</th>
@@ -98,14 +106,23 @@
 	                   <td></td>
 	               </tr>';  
 
-	     $montoT += $monto;
+	     
+	     
+	     ?><script type="text/javascript">
+	     	
+	     	console.log(<?php echo $montoT; ?>);
+	     </script><?php
+	     
+
 	     $sinIvaTotal += $row1['MontoSinIva'];  
 	     //$comisionCal += $calc;   
 
 	     //Realiza insert para tabla donde esta el export
 	     //Este insert solo contiene las ventas de cada RDV,SUP y GTE 
-	     $insert = mysqli_query($conexion,"INSERT INTO exportador_excel VALUES ('', '$row1[CUSTNMBR]','$row1[CUSTNAME]','$row1[APTODCNM]','$row1[ApplyToGLPostDate]','$row1[APFRDCNM]','$row1[APFRDCDT]','$row1[ActualApplyToAmount]','$row1[MontoSinIva]','$row1[Comisiones]','$row1[porcentaje]','$row1[SLPRSNID]','$row1[FULLNAME_SLSPRSN]','$row1[SPRSNSMN]','$row1[id]')")or die("Error en el insert".mysqli_error($conexion));
+	     $insert = mysqli_query($conexion,"INSERT INTO exportador_excel VALUES ('', '$row1[CUSTNMBR]','$row1[CUSTNAME]','$row1[APTODCNM]','$row1[ApplyToGLPostDate]','$row1[APFRDCNM]','$row1[APFRDCDT]','$row1[ActualApplyToAmount]','$row1[MontoSinIva]','$row1[Comisiones]','$row1[porcentaje]','$row1[SLPRSNID]','$row1[FULLNAME_SLSPRSN]','$row1[SPRSNSMN]','$row1[id]','$key')")or die("Error en el insert".mysqli_error($conexion));
 	}
+		$montoT += $monto;
+		$cobro = $montoT;
 
 	if($cargo == 'SUPERVISOR'){
 		include('listado_supervisor.php');
@@ -115,7 +132,13 @@
 		include('listado_gte.php');
 
 	}
-	 	 
+	 	 	
+	 	 	 $html .= '<tr>
+	         			<td colspan="7" align="right">Totales Ventas: </td>
+		                <td align="right"><b>'.toMoney($cobro).'</b></td>
+		                <td align="right"><b>'.toMoney($sinIvaTotal).'</b></td>
+		                <td align="right"><b>'.toMoney($Calc).'</b></td>
+		              </tr>'; 
 	    	// $montoT = toMoney($montoT);
 	    	 //$sinIvaTotal = $sinIvaTotal;
 	    	 $comisionCal = toMoney($Calc);

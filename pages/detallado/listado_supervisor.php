@@ -7,7 +7,8 @@ while($ven = mysqli_fetch_array($consulta1)){
 											 WHERE sup.id_vendedor= '$ven[id_vendedor]'
 											 AND ven.SLPRSNID = sup.id_vendedor
 											 AND hist.SLPRSNID = sup.id_vendedor
-											 AND hist.ApplyToGLPostDate BETWEEN '$fecha' AND '$fecha1'");
+											 AND hist.ApplyFromGLPostDate BETWEEN '$fecha' AND '$fecha1'
+											 ORDER BY hist.APTODCNM ASC");
 			//SETIANDO VARIABLES
 			$montoTven = 0;
 			$sinIvaTotalVen = 0;
@@ -34,7 +35,7 @@ while($ven = mysqli_fetch_array($consulta1)){
 			  	$nom = utf8_encode($row2['FULLNAME_SLSPRSN']);	
 			  	$CalcVen += $calcven;
 				//$id = $row2['SLPRSNID'];
-				$MontoCobroVendedor += $montoTven;
+				
 				$MontoSinIvaSupervisor += $sinIvaTotalVen;
 				$MontoComisionCal += $CalcVen;		
 
@@ -56,9 +57,10 @@ while($ven = mysqli_fetch_array($consulta1)){
 	                   <td></td>
 	               </tr>";  
 
-	        $insert = mysqli_query($conexion,"INSERT INTO exportador_excel VALUES ('', '$row2[CUSTNMBR]','$row2[CUSTNAME]','$row2[APTODCNM]','$row2[ApplyToGLPostDate]','$row2[APFRDCNM]','$row2[APFRDCDT]','$row2[ActualApplyToAmount]','$row2[MontoSinIva]','$row2[Comisiones]','$por','$row2[SLPRSNID]','$row2[FULLNAME_SLSPRSN]','$row2[SPRSNSMN]','$row2[id]')")or die("Error en el insert".mysqli_error($conexion));
+	        $insert = mysqli_query($conexion,"INSERT INTO exportador_excel VALUES ('', '$row2[CUSTNMBR]','$row2[CUSTNAME]','$row2[APTODCNM]','$row2[ApplyToGLPostDate]','$row2[APFRDCNM]','$row2[APFRDCDT]','$row2[ActualApplyToAmount]','$row2[MontoSinIva]','$row2[Comisiones]','$por','$row2[SLPRSNID]','$row2[FULLNAME_SLSPRSN]','$row2[SPRSNSMN]','$row2[id]','$key')")or die("Error en el insert".mysqli_error($conexion));
 
 			}
+			$MontoCobroVendedor += $montoTven;
 			
 		}
 
