@@ -27,7 +27,7 @@
 											 AND sup.id_supervisor = ven.SLPRSNID"); 
     $nf = mysqli_num_rows($consulta);
     $nf2 = mysqli_num_rows($consulta1);
-		echo '<a href="#" id="Export">Exportar a Excel</a>';
+		echo '<a href="pages/detallado/export.php" id="#">Exportar a Excel</a>';
 	
 	 $i = 0;
 	 $Calc = 0; 
@@ -84,7 +84,7 @@
 		<?php	
 
 		 $id =  array($row1['id']);
-		 $html.= '<tr><td><input name="id" type="text" disabled value="'.$row1['id'].'"></td>
+		 $html.= '<tr><td>'.$row1['SLPRSNID'].'</td>
 	    			   <td>'.$nom.'</td>
 	    			   <td>'.$row1['CUSTNAME'].' </td>
 	    			   <td>'.$row1['APTODCNM'].'</td>
@@ -100,7 +100,11 @@
 
 	     $montoT += $monto;
 	     $sinIvaTotal += $row1['MontoSinIva'];  
-	     //$comisionCal += $calc;     
+	     //$comisionCal += $calc;   
+
+	     //Realiza insert para tabla donde esta el export
+	     //Este insert solo contiene las ventas de cada RDV,SUP y GTE 
+	     $insert = mysqli_query($conexion,"INSERT INTO exportador_excel VALUES ('', '$row1[CUSTNMBR]','$row1[CUSTNAME]','$row1[APTODCNM]','$row1[ApplyToGLPostDate]','$row1[APFRDCNM]','$row1[APFRDCDT]','$row1[ActualApplyToAmount]','$row1[MontoSinIva]','$row1[Comisiones]','$row1[porcentaje]','$row1[SLPRSNID]','$row1[FULLNAME_SLSPRSN]','$row1[SPRSNSMN]','$row1[id]')")or die("Error en el insert".mysqli_error($conexion));
 	}
 
 	if($cargo == 'SUPERVISOR'){

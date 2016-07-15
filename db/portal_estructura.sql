@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-07-2016 a las 23:04:55
+-- Tiempo de generación: 15-07-2016 a las 15:33:41
 -- Versión del servidor: 10.1.10-MariaDB
 -- Versión de PHP: 5.5.30
 
@@ -34,6 +34,30 @@ CREATE TABLE `comisiones` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `exportador_excel`
+--
+
+CREATE TABLE `exportador_excel` (
+  `id` int(11) NOT NULL,
+  `CUSTNMBR` varchar(25) NOT NULL,
+  `CUSTNAME` varchar(200) NOT NULL,
+  `APTODCNM` varchar(100) NOT NULL,
+  `ApplyToGLPostDate` date NOT NULL,
+  `APFRDCNM` varchar(100) NOT NULL,
+  `APFRDCDT` date NOT NULL,
+  `ActualApplyToAmount` float NOT NULL,
+  `MontoSinIva` float NOT NULL,
+  `Comisiones` float NOT NULL,
+  `porcentaje` float NOT NULL,
+  `SLPRSNID` int(11) NOT NULL,
+  `FULLNAME_SLSPRSN` varchar(150) NOT NULL,
+  `SPRSNSMN` varchar(50) NOT NULL,
+  `id_historial` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `gerentes`
 --
 
@@ -50,6 +74,7 @@ CREATE TABLE `gerentes` (
 --
 
 CREATE TABLE `historial_comisiones` (
+  `id` int(11) NOT NULL,
   `CUSTNMBR` varchar(25) NOT NULL,
   `CUSTNAME` varchar(200) NOT NULL,
   `APTODCNM` varchar(100) NOT NULL,
@@ -103,9 +128,21 @@ ALTER TABLE `comisiones`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `exportador_excel`
+--
+ALTER TABLE `exportador_excel`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `gerentes`
 --
 ALTER TABLE `gerentes`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `historial_comisiones`
+--
+ALTER TABLE `historial_comisiones`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -130,10 +167,20 @@ ALTER TABLE `vendedores`
 ALTER TABLE `comisiones`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT de la tabla `exportador_excel`
+--
+ALTER TABLE `exportador_excel`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=193;
+--
 -- AUTO_INCREMENT de la tabla `gerentes`
 --
 ALTER TABLE `gerentes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+--
+-- AUTO_INCREMENT de la tabla `historial_comisiones`
+--
+ALTER TABLE `historial_comisiones`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24329;
 --
 -- AUTO_INCREMENT de la tabla `supervisores`
 --

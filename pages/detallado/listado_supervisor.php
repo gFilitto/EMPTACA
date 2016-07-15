@@ -56,6 +56,8 @@ while($ven = mysqli_fetch_array($consulta1)){
 	                   <td></td>
 	               </tr>";  
 
+	        $insert = mysqli_query($conexion,"INSERT INTO exportador_excel VALUES ('', '$row2[CUSTNMBR]','$row2[CUSTNAME]','$row2[APTODCNM]','$row2[ApplyToGLPostDate]','$row2[APFRDCNM]','$row2[APFRDCDT]','$row2[ActualApplyToAmount]','$row2[MontoSinIva]','$row2[Comisiones]','$por','$row2[SLPRSNID]','$row2[FULLNAME_SLSPRSN]','$row2[SPRSNSMN]','$row2[id]')")or die("Error en el insert".mysqli_error($conexion));
+
 			}
 			
 		}

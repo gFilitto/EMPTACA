@@ -2,10 +2,7 @@
  
 include('../../log/conex_mysql.php');
 
-$ids = $_REQUEST['id'];
-foreach ($ids as $id) {
-    $consulta = mysqli_query($conexion,"SELECT * FROM historial_comisiones WHERE id = '$id'");
-}
+    $consulta = mysqli_query($conexion,"SELECT * FROM exportador_excel");
 
      require_once('../../lib/Classes/PHPExcel.php');
      $objPHPExcel = new PHPExcel();
@@ -21,10 +18,14 @@ foreach ($ids as $id) {
         ->setKeywords("")
         ->setCategory("");   
 
+        $objPHPExcel->getActiveSheet()->getDefaultColumnDimension()->setWidth(20);
         
 
         $objPHPExcel->setActiveSheetIndex(0)
-        ->setCellValue('A1','Id')
+        ->setCellValue('A1','Id');
+
+        
+        $objPHPExcel->setActiveSheetIndex(0)
         ->setCellValue('B1','Vendedor')
         ->setCellValue('C1','Cliente')
         ->setCellValue('D1','N° Fact/Cheq. Dev')
@@ -37,45 +38,39 @@ foreach ($ids as $id) {
         ->setCellValue('K1','%');
 
         //ESTILO DE LA HOJA DE CALCULO
-        $objPHPExcel->getActiveSheet()->getDefaultColumnDimension()->setWidth(25);
-        $objPHPExcel->getActiveSheet()->getStyle('H2:G200')->getNumberFormat()->setFormatCode("#,##0.00");
-        $objPHPExcel->getActiveSheet()->getStyle('I2:J200')->getNumberFormat()->setFormatCode("#,##0.00");
-        $objPHPExcel->getActiveSheet()->getStyle('J2:D200')->getNumberFormat()->setFormatCode("#,##0.00");
+        
+        $objPHPExcel->getActiveSheet()->getStyle('H2:H200')->getNumberFormat()->setFormatCode("#,##0.00");
+        $objPHPExcel->getActiveSheet()->getStyle('I2:I200')->getNumberFormat()->setFormatCode("#,##0.00");
+        $objPHPExcel->getActiveSheet()->getStyle('J2:J200')->getNumberFormat()->setFormatCode("#,##0.00");
         //$objPHPExcel->getActiveSheet()->getStyle('F2:F200')->getNumberFormat()->setFormatCode("#,##0.00");
 
     $i = 2;  
-    while($row = mysqli_fetch_array($consulta)){
+    while($row1 = mysqli_fetch_array($consulta)){
+     
+            $nom = utf8_encode($row1['FULLNAME_SLSPRSN']);
+            $porcentaje = $row1['porcentaje'] * 100;
 
-      $sql = mysqli_query($conexion,"SELECT * FROM hist_commissions_sale 
-                                     WHERE FULLNAME_SLSPRSN LIKE '%$row[CUSTNMBR]'"); 
-
-      while($row1 = mysqli_fetch_array($sql)){
             $objPHPExcel->setActiveSheetIndex(0)
-                ->setCellValue('A'.$i, $row1['CUSTNMBR'])
-                ->setCellValue('B'.$i, $row1['CUSTNAME'])
-                ->setCellValue('C'.$i, $row1['DOCNUMBR'])
-                ->setCellValue('D'.$i, $row1['DOCDATE'])
-                ->setCellValue('E'.$i, $row1['APFRDCNM'])
-                ->setCellValue('F'.$i, $row1['APFRDCDT'])
-                ->setCellValue('G'.$i, $row1['ActualApplyToAmount'])
-                ->setCellValue('H'.$i, $row1['ApplyFromGLPostDate'])
-                ->setCellValue('I'.$i, $row1['DOCDAYS'])
-                ->setCellValue('J'.$i, $row1['MontoSinIva'])
-                ->setCellValue('K'.$i, $row1['calc_result']);
-                
-         $i++;
-
-      }
+                ->setCellValue('A'.$i, $row1['SLPRSNID'])
+                ->setCellValue('B'.$i, $nom)
+                ->setCellValue('C'.$i, $row1['CUSTNAME'])
+                ->setCellValue('D'.$i, $row1['APTODCNM'])
+                ->setCellValue('E'.$i, $row1['ApplyToGLPostDate'])
+                ->setCellValue('F'.$i, $row1['APFRDCNM'])
+                ->setCellValue('G'.$i, $row1['APFRDCDT'])
+                ->setCellValue('H'.$i, $row1['ActualApplyToAmount'])
+                ->setCellValue('I'.$i, $row1['MontoSinIva'])
+                ->setCellValue('J'.$i, $row1['Comisiones'])
+                ->setCellValue('K'.$i, $porcentaje);
 
         $i++;
-        $objPHPExcel->setActiveSheetIndex(0)
-        ->setCellValue('A'.$i, 'Vendedor: '.$row['CUSTNMBR'])
+        /*$objPHPExcel->setActiveSheetIndex(0)
+        ->setCellValue('A'.$i, 'Vendedor: '.$row1['CUSTNMBR'])
         ->setCellValue('C'.$i, 'Total Cobro:')
-        ->setCellValue('D'.$i, $row['total_cobro'])
+        ->setCellValue('D'.$i, $row1['total_cobro'])
         ->setCellValue('E'.$i, 'Total sin Iva:')
-        ->setCellValue('F'.$i, $row['total_sin_iva']);
-        $i++;
-        $i++;
+        ->setCellValue('F'.$i, $row['total_sin_iva']);*/
+       
        
     }
 header('Content-Type: application/vnd.ms-excel');
